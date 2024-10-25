@@ -22,6 +22,7 @@ CREATE TABLE enrollment (
     course_id INTEGER REFERENCES courses(course_id)
 );
 
+SELECT * FROM students;
 
 
 INSERT INTO students (student_id, student_name, age, email, frontend_mark, backend_mark) VALUES
@@ -59,9 +60,7 @@ JOIN courses c on c.course_id = e.course_id
 WHERE c.course_name = 'Next.js';
 
 
-
-
-
+--Update the status of the student with the highest total (frontend_mark + backend_mark) to 'Awarded'.
 UPDATE students
 SET status = 'Awarded'
 WHERE student_id = (
@@ -70,3 +69,44 @@ WHERE student_id = (
     ORDER BY (frontend_mark + backend_mark) DESC
     LIMIT 1
 );
+
+
+--Query 4:
+--Delete all courses that have no students enrolled.
+
+DELETE FROM courses
+WHERE course_id NOT IN (
+    SELECT DISTINCT course_id
+    FROM enrollment
+);
+
+
+--Query 5:
+--Retrieve the names of students using a limit of 2, starting from the 3rd student.
+
+SELECT student_name
+FROM students
+ORDER BY student_id
+LIMIT 2 OFFSET 2;
+
+
+--Query 6:
+--Retrieve the course names and the number of students enrolled in each course.
+
+SELECT c.course_name, COUNT(e.student_id) AS num_students
+FROM courses c
+LEFT JOIN enrollment e ON c.course_id = e.course_id
+GROUP BY c.course_name;
+
+
+--Query 7:
+--Calculate and display the average age of all students.
+SELECT AVG(age) AS average_age
+FROM students;
+
+
+--Query 8:
+--Retrieve the names of students whose email addresses contain 'example.com'.
+SELECT student_name
+FROM students
+WHERE email LIKE '%example.com%';
